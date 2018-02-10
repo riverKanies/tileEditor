@@ -8,6 +8,7 @@ export default class Map extends Component {
     this.selectMap = this.selectMap.bind(this)
     this.rename = this.rename.bind(this)
     this.copy = this.copy.bind(this)
+    this.duplicate = this.duplicate.bind(this)
   }
   render() {
     const {map} = this.props
@@ -16,8 +17,9 @@ export default class Map extends Component {
     return (
       <li onClick={this.selectMap} >
         <input value={map.text} onChange={this.rename} style={style}/>
+        <button onClick={this.duplicate}>Dup</button>
         <button onClick={this.copy}>Copy</button>
-        <input id={`copy-${map._id}`} style={{position: 'absolute', marginLeft: '110%'}} value={JSON.stringify(map.level)} />
+        <input id={`copy-${map._id}`} style={{position: 'absolute', marginLeft: '110%'}} value={JSON.stringify(map.level)} onChange={()=>(null)} />
       </li>
     );
   }
@@ -32,5 +34,10 @@ export default class Map extends Component {
     if (!el) return
     el.select()
     document.execCommand("Copy")
+  }
+  duplicate () {
+    const map = this.props.map
+    delete map._id
+    Meteor.call('maps.insert', map)
   }
 }
