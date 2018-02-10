@@ -13,4 +13,7 @@ Meteor.methods({
           level
         }})
     },
+    'maps.remove'(_id) {
+      Maps.remove({_id})
+    },
 })

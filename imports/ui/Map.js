@@ -1,4 +1,10 @@
 import React, { Component } from 'react';
+
+const bindAll = (a, that) => {
+  a.forEach((f)=>{
+    that[f] = that[f].bind(that)
+  })
+}
  
 // Task component - represents a single todo item
 export default class Map extends Component {
@@ -9,6 +15,9 @@ export default class Map extends Component {
     this.rename = this.rename.bind(this)
     this.copy = this.copy.bind(this)
     this.duplicate = this.duplicate.bind(this)
+    bindAll([
+      'delete'
+    ], this)
   }
   render() {
     const {map} = this.props
@@ -18,8 +27,8 @@ export default class Map extends Component {
       <li onClick={this.selectMap} >
         <input value={map.text} onChange={this.rename} style={style}/>
         <button onClick={this.duplicate}>Dup</button>
-        <button onClick={this.copy}>Copy</button>
-        <input id={`copy-${map._id}`} style={{position: 'absolute', marginLeft: '110%'}} value={JSON.stringify(map.level)} onChange={()=>(null)} />
+        <button onClick={this.copy}>Copy</button><input id={`copy-${map._id}`} style={{position: 'absolute', marginLeft: '110%'}} value={JSON.stringify(map.level)} onChange={()=>(null)} />
+        <button onClick={this.delete}>X</button>
       </li>
     );
   }
@@ -39,5 +48,9 @@ export default class Map extends Component {
     const map = this.props.map
     delete map._id
     Meteor.call('maps.insert', map)
+  }
+  delete() {
+    const map = this.props.map
+    if (confirm(`WARNING: Delete ${map.text} ?`))  Meteor.call('maps.remove', map._id)
   }
 }
