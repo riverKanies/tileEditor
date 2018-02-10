@@ -20,15 +20,23 @@ class App extends Component {
     super(props)
 
     this.state = {}
+    this.state.map=null
     this.state.selectedTile = 'ee'
 
     this.createMap = this.createMap.bind(this)
     this.selectTile = this.selectTile.bind(this)
+    this.setTile = this.setTile.bind(this)
+  }
+  componentDidMount() {
+    setTimeout(()=>{
+      if (!this.state.map && this.props.maps) this.setState({map: this.props.maps[0]})
+    }, 500)
   }
 
   renderMaps() {
+    const sm = this.state.map
     return this.props.maps.map((map) => (
-      <Map key={map._id} map={map} ss={this.setState.bind(this)} />
+      <Map key={map._id} map={map} ss={this.setState.bind(this)} selected={(sm && map._id == sm._id)} />
     ));
   }
  
@@ -71,13 +79,12 @@ class App extends Component {
   }
 
   renderMap() {
-    const map = this.state.map || this.props.maps[0]
+    const map = this.state.map
     if (!map) return ''
     return <svg viewBox={vb.join(' ')} width='100%'>
       {map.level.map((row, rI)=>{
         return row.map((cell, cI)=>{
-          // x={cI*tileSize} y={rI*tileSize} width={tileSize} height={tileSize} stroke={'white'}
-          return <g key={rI+'-'+cI} transform={`translate(${cI*tileSize},${rI*tileSize})`}>
+          return <g onClick={this.setTile(rI,cI)} key={rI+'-'+cI} transform={`translate(${cI*tileSize},${rI*tileSize})`}>
             {this.renderTile(cell)}
           </g>
         })
@@ -107,6 +114,12 @@ class App extends Component {
   selectTile(t) {
     return ()=>{
       this.setState({selectedTile: t})
+    }
+  }
+  setTile(rI,cI) {
+    return ()=>{
+      this.state.map.level[rI][cI] = this.state.selectedTile
+      this.setState({})
     }
   }
 }

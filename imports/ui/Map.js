@@ -9,7 +9,7 @@ export default class Map extends Component {
   }
   render() {
     return (
-      <li onClick={this.selectMap} >{this.props.map.text}-{this.props.map._id.slice(0,4)}</li>
+      <li onClick={this.selectMap} style={this.props.selected ? {border: '2px solid blue'} : {} }>{this.props.map.text}-{this.props.map._id.slice(0,4)}</li>
     );
   }
   selectMap(){
