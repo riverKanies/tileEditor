@@ -9,6 +9,10 @@ const tileSize = 30
 const gameWidth = 24
 const gameHeight = 14
 const vb = [0, 0, gameWidth*tileSize, gameHeight*tileSize]
+
+const tiles = {
+  't1': 'tile2.PNG'
+}
  
 // App component - represents the whole app
 class App extends Component {
@@ -41,7 +45,7 @@ class App extends Component {
             </ul>
           </div>
           <div className='col-xs-9' >
-            <div style={{background: 'black', color: 'white'}}>map editor
+            <div style={{background: 'black', color: 'white'}}>
               {this.renderMap()}
             </div>
           </div>
@@ -52,24 +56,36 @@ class App extends Component {
   }
 
   renderMap() {
-    const { map } = this.state
+    const map = this.state.map || this.props.maps[0]
     if (!map) return ''
-    console.log(map)
     return <svg viewBox={vb.join(' ')} width='100%'>
-      {map.level.map((row, i)=>{
-        return row.map((cell, j)=>{
-          return <g key={i+'-'+j}>
-            {/* <rect  */}
+      {map.level.map((row, rI)=>{
+        return row.map((cell, cI)=>{
+          // x={cI*tileSize} y={rI*tileSize} width={tileSize} height={tileSize} stroke={'white'}
+          return <g key={rI+'-'+cI} transform={`translate(${cI*tileSize},${rI*tileSize})`}>
+            {this.renderTile(cell)}
           </g>
         })
       })}
     </svg>
   }
+  renderTile(cell) {
+    if (cell == 'ee') return <rect width={tileSize} height={tileSize} stroke={'white'}/>
+    return <image href={tiles[cell]} />
+  }
 
   createMap() {
     const map = {
-      text: "Hello map", level: [[1,2],[3,4]], createdAt: new Date()
+      text: "map", level: [], createdAt: new Date()
     }
+    for (let rI = 0; rI<14; rI++) {
+      map.level[rI] = []
+      for (let cI = 0; cI<24; cI++) {
+        map.level[rI][cI] = 'ee'
+      }
+    }
+    map.level[7][12] = 't1'
+
     Meteor.call('maps.insert', map)
   }
 }

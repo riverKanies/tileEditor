@@ -9,11 +9,10 @@ export default class Map extends Component {
   }
   render() {
     return (
-      <li onClick={this.selectMap} >{this.props.map.text}</li>
+      <li onClick={this.selectMap} >{this.props.map.text}-{this.props.map._id.slice(0,4)}</li>
     );
   }
   selectMap(){
-    console.log('map', this.props.map)
     this.props.ss({map: this.props.map})
   }
 }
