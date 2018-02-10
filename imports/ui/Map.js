@@ -13,6 +13,7 @@ export default class Map extends Component {
     );
   }
   selectMap(){
-    this.props.ss({map: this.props.map})
+    console.log('map', this.props.mapIndex)
+    this.props.ss({selectedMap: this.props.mapIndex})
   }
 }
