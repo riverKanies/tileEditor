@@ -7,8 +7,9 @@ Meteor.methods({
       return Maps.insert(map)
     },
     'maps.update'(map) {
-        const { level } = map
+        const { level, text } = map
         Maps.update({_id: map._id}, { $set: {
+          text,
           level
         }})
     },

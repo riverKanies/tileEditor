@@ -44,15 +44,15 @@ class App extends Component {
     return (
       <div>
         <header>
-          <h3>Maps</h3>
+          
         </header>
 
         <div className='row'  style={{width: '100%', margin: '0'}}>
-          <div className='col-xs-3' >
-            <div onClick={this.createMap}>New Map</div>
-            <ul style={{background: 'lightgray'}}>
+          <div className='col-xs-3' style={{background: 'lightgray'}}>
+            <ul style={{listStyleType: 'none', padding: '0'}}>
               {this.renderMaps()}
             </ul>
+            <div onClick={this.createMap} style={{background: 'green', width: '20px', height: '20px', color: 'white', textAlign: 'center'}}>+</div>
           </div>
           <div className='col-xs-9' >
             <div>
@@ -98,7 +98,7 @@ class App extends Component {
 
   createMap() {
     const map = {
-      text: "map", level: [], createdAt: new Date()
+      text: Math.random().toString(), level: [], createdAt: new Date()
     }
     for (let rI = 0; rI<14; rI++) {
       map.level[rI] = []
