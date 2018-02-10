@@ -20,8 +20,10 @@ class App extends Component {
     super(props)
 
     this.state = {}
+    this.state.selectedTile = 'ee'
 
     this.createMap = this.createMap.bind(this)
+    this.selectTile = this.selectTile.bind(this)
   }
 
   renderMaps() {
@@ -45,6 +47,9 @@ class App extends Component {
             </ul>
           </div>
           <div className='col-xs-9' >
+            <div>
+              {this.renderTileSelect()}
+            </div>
             <div style={{background: 'black', color: 'white'}}>
               {this.renderMap()}
             </div>
@@ -53,6 +58,16 @@ class App extends Component {
 
       </div>
     );
+  }
+
+  renderTileSelect() {
+    let selectables = [<svg key='ee' onClick={this.selectTile('ee')} viewBox='0 0 30 30' style={{width: '100%', background: 'black', border: (this.state.selectedTile == 'ee' ? '3px solid blue':'')}}></svg>]
+    for (let key in tiles) {
+      selectables.push(<img key={key} onClick={this.selectTile(key)} src={tiles[key]} style={{width: '100%', border: (this.state.selectedTile == key ? '3px solid blue':'')}}/>)
+    }
+    return <div className='row' style={{background: 'gray', padding: '20px'}}>
+      {selectables.map((s,i)=>(<div key={i} className='col-xs-2' >{s}</div>))}
+    </div>
   }
 
   renderMap() {
@@ -87,6 +102,12 @@ class App extends Component {
     map.level[7][12] = 't1'
 
     Meteor.call('maps.insert', map)
+  }
+
+  selectTile(t) {
+    return ()=>{
+      this.setState({selectedTile: t})
+    }
   }
 }
 
