@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
  
 import { Maps } from '../api/maps.js';
+import tiles from '../utils/tiles'
  
 import Map from './Map.js';
 
@@ -9,10 +10,6 @@ const tileSize = 30
 const gameWidth = 24
 const gameHeight = 14
 const vb = [0, 0, gameWidth*tileSize, gameHeight*tileSize]
-
-const tiles = {
-  't1': 'tile2.PNG'
-}
  
 // App component - represents the whole app
 class App extends Component {
@@ -49,7 +46,7 @@ class App extends Component {
 
         <div className='row'  style={{width: '100%', margin: '0'}}>
           <div className='col-xs-3' style={{background: 'lightgray'}}>
-            <ul style={{listStyleType: 'none', padding: '0'}}>
+            <ul style={{listStyleType: 'none', padding: '0', margin: '5px 0'}}>
               {this.renderMaps()}
             </ul>
             <div onClick={this.createMap} style={{background: 'green', width: '20px', height: '20px', color: 'white', textAlign: 'center'}}>+</div>
@@ -74,7 +71,7 @@ class App extends Component {
       selectables.push(<img key={key} onClick={this.selectTile(key)} src={tiles[key]} style={{width: '100%', border: (this.state.selectedTile == key ? '3px solid blue':'')}}/>)
     }
     return <div className='row' style={{background: 'gray', padding: '20px'}}>
-      {selectables.map((s,i)=>(<div key={i} className='col-xs-2' >{s}</div>))}
+      {selectables.map((s,i)=>(<div key={i} className='col-xs-1' >{s}</div>))}
     </div>
   }
 

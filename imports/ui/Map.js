@@ -21,11 +21,13 @@ export default class Map extends Component {
   }
   render() {
     const {map} = this.props
-    let style = {margin: '10px 0'}
-    if (this.props.selected) style.border = '2px solid blue'
+    let itemStyle = {padding: '5px', background: 'gray', marginBottom: '5px'}
+    if (this.props.selected) {
+      itemStyle.background = 'black'
+    }
     return (
-      <li onClick={this.selectMap} >
-        <input value={map.text} onChange={this.rename} style={style}/>
+      <li onClick={this.selectMap} style={itemStyle}>
+        <input value={map.text} onChange={this.rename} />
         <button onClick={this.duplicate}>Dup</button>
         <button onClick={this.copy}>Copy</button><input id={`copy-${map._id}`} style={{position: 'absolute', marginLeft: '110%'}} value={JSON.stringify(map.level)} onChange={()=>(null)} />
         <button onClick={this.delete}>X</button>
