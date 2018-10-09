@@ -61,6 +61,7 @@ export default class Map extends Component {
     const {map} = this.props
     const height = map.level.length
     const width = map.level[0].length
+    const dirs = ['u','d','l','r']
 
     let bird = {x:0, y:0}
     let wormCount = 0
@@ -81,7 +82,7 @@ export default class Map extends Component {
     function move(pos,dx,dy) {
       const x = pos.x+dx
       const y = pos.y+dy
-      let worms = pos.worms
+      let worms = pos.worms.map(w=>w)
       const nextTile = map.level[y][x]
       const isWorm = nextTile.slice(0,1) == 'w'
       if (nextTile == 'ee' || isWorm) {
@@ -89,7 +90,10 @@ export default class Map extends Component {
           const old = worms.find((w)=>{
             return w.x == x && w.y == y
           })
-          if (!old) worms.push({x,y})
+          if (!old) {
+            worms.push({x,y})
+            if (worms.length == wormCount) console.log('solved!')
+          }
         }
         return move({x,y,worms},dx,dy)
       }
@@ -106,17 +110,35 @@ export default class Map extends Component {
       if (newPos.x == pos.x && newPos.y == pos.y) return null
       return newPos
     }
-    // function createPaths (pos) {
-    //   return {
-    //     u: {},
-    //     d: {},
-    //     l: {},
-    //     r: {}
-    //   }
-    // }
-    // const pathtree = createPaths(bird)
-    const newPos = makePath({...bird,worms:[]},'r')
 
-    console.log('simulating',newPos,bird,wormCount)
+    function makeBranch (pos) {
+      const branch = {}
+      dirs.forEach((d)=>{
+        branch[d] = makePath(pos,d)
+      })
+      return branch
+    }
+
+    function makeBranches (branch,layers) {
+      dirs.forEach(d=>{
+        if(branch[d]) {
+          branch[d].branch = makeBranch(branch[d])
+          if (layers > 1) branch[d].branch = makeBranches(branch[d].branch,layers-1)
+        }
+      })
+      return branch
+    }
+
+    function makeTree (pos,layers) {
+      const tree = makeBranch(pos)
+      return makeBranches(tree,layers-1)
+    }
+
+    const startingPos = {...bird,worms:[]}
+    //const newPos = makePath(startingPos,'r')
+    //const branch = makeBranch(startingPos)
+    const tree = makeTree(startingPos,5)
+
+    console.log('simulating',tree)
   }
 }
