@@ -16,7 +16,8 @@ export default class Map extends Component {
     this.copy = this.copy.bind(this)
     this.duplicate = this.duplicate.bind(this)
     bindAll([
-      'delete'
+      'delete',
+      'simulate'
     ], this)
   }
   render() {
@@ -31,6 +32,7 @@ export default class Map extends Component {
         <button onClick={this.duplicate}>Dup</button>
         <button onClick={this.copy}>Copy</button><input id={`copy-${map._id}`} style={{position: 'absolute', marginLeft: '110%'}} value={JSON.stringify(map.level)} onChange={()=>(null)} />
         <button onClick={this.delete}>X</button>
+        <button onClick={this.simulate}>[sim]</button>
       </li>
     );
   }
@@ -54,5 +56,67 @@ export default class Map extends Component {
   delete() {
     const map = this.props.map
     if (confirm(`WARNING: Delete ${map.text} ?`))  Meteor.call('maps.remove', map._id)
+  }
+  simulate() {
+    const {map} = this.props
+    const height = map.level.length
+    const width = map.level[0].length
+
+    let bird = {x:0, y:0}
+    let wormCount = 0
+    for (let i=1;i<height-2;i++) {
+      for (let j=1;j<width-2;j++) {
+        const tile = map.level[i][j]
+        if (tile == 'bird') {
+          bird.y = i
+          bird.x = j
+          map.level[i][j] = 'ee'
+        }
+        if (tile.slice(0,1) == 'w') {
+          //map.level[i][j] = 'ee'
+          wormCount++
+        }
+      }
+    }
+    function move(pos,dx,dy) {
+      const x = pos.x+dx
+      const y = pos.y+dy
+      let worms = pos.worms
+      const nextTile = map.level[y][x]
+      const isWorm = nextTile.slice(0,1) == 'w'
+      if (nextTile == 'ee' || isWorm) {
+        if (isWorm) {
+          const old = worms.find((w)=>{
+            return w.x == x && w.y == y
+          })
+          if (!old) worms.push({x,y})
+        }
+        return move({x,y,worms},dx,dy)
+      }
+      return pos
+    }
+    function makePath(pos,dir) {
+      let dx = 0
+      let dy = 0
+      if (dir == 'u') dy = -1
+      if (dir == 'd') dy = 1
+      if (dir == 'l') dx = -1
+      if (dir == 'r') dx = 1
+      const newPos = move(pos,dx,dy)
+      if (newPos.x == pos.x && newPos.y == pos.y) return null
+      return newPos
+    }
+    // function createPaths (pos) {
+    //   return {
+    //     u: {},
+    //     d: {},
+    //     l: {},
+    //     r: {}
+    //   }
+    // }
+    // const pathtree = createPaths(bird)
+    const newPos = makePath({...bird,worms:[]},'r')
+
+    console.log('simulating',newPos,bird,wormCount)
   }
 }

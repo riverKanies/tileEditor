@@ -1,0 +1,1 @@
+`meteor --port 4000` to run alonside a game that's running on 3000

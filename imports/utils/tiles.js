@@ -12,4 +12,6 @@ export default {
     'wu': '/worm/up1.PNG',
     'wl': '/worm/left1.PNG',
     'wr': '/worm/right1.PNG',
+
+    'bird': '/bird.PNG',
 }
