@@ -92,10 +92,10 @@ export default class Map extends Component {
           })
           if (!old) {
             worms.push({x,y})
-            if (worms.length == wormCount) console.log('solved!')
+            if (worms.length == wormCount) console.log('solved!',pos.path)
           }
         }
-        return move({x,y,worms},dx,dy)
+        return move({x,y,worms,path:pos.path},dx,dy)
       }
       return pos
     }
@@ -106,7 +106,9 @@ export default class Map extends Component {
       if (dir == 'd') dy = 1
       if (dir == 'l') dx = -1
       if (dir == 'r') dx = 1
-      const newPos = move(pos,dx,dy)
+      let path = pos.path.map(m=>m)
+      path.push(dir)
+      const newPos = move({...pos,path},dx,dy)
       if (newPos.x == pos.x && newPos.y == pos.y) return null
       return newPos
     }
@@ -134,7 +136,7 @@ export default class Map extends Component {
       return makeBranches(tree,layers-1)
     }
 
-    const startingPos = {...bird,worms:[]}
+    const startingPos = {...bird,worms:[],path:[]}
     //const newPos = makePath(startingPos,'r')
     //const branch = makeBranch(startingPos)
     const tree = makeTree(startingPos,5)
