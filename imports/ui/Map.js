@@ -150,21 +150,36 @@ export default class Map extends Component {
     function runTime() {
       return (Date.now() - startTime)/1000+'s'
     }
+    function trim(tips) {
+      let maxWorms = 0
+      tips.forEach(tip=>{
+        const numWorms = tip.worms.length
+        if (numWorms > maxWorms) maxWorms = numWorms
+      })
+      console.log('max worms', maxWorms)
+      return tips.filter(tip=>{
+        return tip.worms.length > maxWorms -2
+      })
+    }
 
     const startingPos = {...bird,worms:[],path:[]}
     const baseLayers = 18 //18 -> 387,420,489 max tips
     let tree = makeTree(startingPos,baseLayers)
     console.log('base layers done', baseLayers)
 
-    // for memory management puposes
-    // const tips = []
-    // getTips(tree)
-    // tips.forEach((tip,i)=>{
-    //   tree = makeTree(tip,9)
-    //   if (i%1000000 == 0) {
-    //     console.log('tips done', i, 'in', runTime())
-    //   }
-    // })
+    let tips = []
+    getTips(tree)
+    console.log('num tips', tips.length)
+    tips = trim(tips)
+    console.log('num trimmed', tips.length)
+
+    // // for memory management puposes
+    tips.forEach((tip,i)=>{
+      tree = makeTree(tip,9)
+      if (i%1000 == 0) {
+        console.log('tips done', i, 'in', runTime())
+      }
+    })
 
     console.log('done in',runTime())
   }
