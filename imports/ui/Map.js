@@ -62,30 +62,30 @@ export default class Map extends Component {
     const height = map.level.length
     const width = map.level[0].length
     const dirs = ['u','d','l','r']
+    const startTime = Date.now()
 
     let bird = {x:0, y:0}
     let wormCount = 0
-    for (let i=1;i<height-2;i++) {
-      for (let j=1;j<width-2;j++) {
+    for (let i=0;i<height;i++) {
+      for (let j=0;j<width;j++) {
         const tile = map.level[i][j]
         if (tile == 'bird') {
           bird.y = i
           bird.x = j
-          map.level[i][j] = 'ee'
         }
         if (tile.slice(0,1) == 'w') {
-          //map.level[i][j] = 'ee'
           wormCount++
         }
       }
     }
+    console.log('worm count:',wormCount)
     function move(pos,dx,dy) {
       const x = pos.x+dx
       const y = pos.y+dy
       let worms = pos.worms.map(w=>w)
       const nextTile = map.level[y][x]
       const isWorm = nextTile.slice(0,1) == 'w'
-      if (nextTile == 'ee' || isWorm) {
+      if (nextTile == 'ee' || isWorm || nextTile == 'bird') {
         if (isWorm) {
           const old = worms.find((w)=>{
             return w.x == x && w.y == y
@@ -136,11 +136,36 @@ export default class Map extends Component {
       return makeBranches(tree,layers-1)
     }
 
-    const startingPos = {...bird,worms:[],path:[]}
-    //const newPos = makePath(startingPos,'r')
-    //const branch = makeBranch(startingPos)
-    const tree = makeTree(startingPos,5)
+    function getTips(branch) {
+      dirs.forEach(d=>{
+        if (branch[d]) {
+          if (branch[d].branch) {
+            getTips(branch[d].branch)
+          } else {
+            tips.push(branch[d])
+          }
+        }
+      })
+    }
+    function runTime() {
+      return (Date.now() - startTime)/1000+'s'
+    }
 
-    console.log('simulating',tree)
+    const startingPos = {...bird,worms:[],path:[]}
+    const baseLayers = 18 //18 -> 387,420,489 max tips
+    let tree = makeTree(startingPos,baseLayers)
+    console.log('base layers done', baseLayers)
+
+    // for memory management puposes
+    // const tips = []
+    // getTips(tree)
+    // tips.forEach((tip,i)=>{
+    //   tree = makeTree(tip,9)
+    //   if (i%1000000 == 0) {
+    //     console.log('tips done', i, 'in', runTime())
+    //   }
+    // })
+
+    console.log('done in',runTime())
   }
 }
